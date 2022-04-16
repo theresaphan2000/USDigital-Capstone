@@ -1,11 +1,10 @@
-
-
 #include <LiquidCrystal.h>
 
 // Menu Array
-String measurementType[] = {{"[VOLTAGE]:"}, {"[REVERSE LEAKAGE CURRENT]:"}, {"[POWER]:"}};  // Text on the bottom line
+String measurementType[] = {{"VOLTAGE:"}, {"REVERSE LEAKAGE CURRENT:"}, {"POWER:"}};  // Text on the LCD
 
 // Pins being used
+// Pins Need to be changed
 const int OnButtonPin = 5;       // Pin 5 for Power command
 const int MeasurementButtonPin = 6;      // Pin 6 for measurement command
 const int ModeButtonPin = 7;         // Pin 7 for encoder type command
