@@ -29,8 +29,12 @@ const int RCurrent_100 = 2;
 const int powerButton = 0;
 const int currentButton = 1;
 const int voltageButton = 17;
+int buttonState; //check button state 
 
-/////////////////////////Functions//////////////////////////////
+/////////////////////////LCD INIT FUNCTION//////////////////////
+LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
+
+//////////////////////////////////////////////////////////////////Functions///////////////////////////////////////////////////////////////////////
 /* How the LCD function works is it takes in 4 arguments, the readings and the pin number of which button is pressed. It uses a switch case to see 
  *  which button value was passed through and proceeds to print the value corresponding to what the button is supposed to do 
  */
@@ -47,29 +51,28 @@ void lcdControl(float reverseCurrent, float forwardVoltage, float powerUsage, co
     case 1: 
       reverseCurrent = reverseCurrent*(5.0 / 1023.0); //converting to a legible value 
       lcd.setCursor(0,0); 
-      lcd.print("R-Current: " + string(reverseCurrent));
+      lcd.print("R-Current: " + String(reverseCurrent));
       //  delay(1000);
 
       break;
     case 17:
       forwardVoltage = forwardVoltage*(5.0 / 1023.0); //converting to a legible value 
       lcd.setCursor(0,0); 
-      lcd.print("F-Voltage: " + string(forwardVoltage)); 
+      lcd.print("F-Voltage: " + String(forwardVoltage)); 
 
       powerUsage = powerUsage*(5.0 / 1023.0); //converting to a legible value 
       lcd.setCursor(1,0); 
-      lcd.print("Power: " + string(powerUsage)); 
+      lcd.print("Power: " + String(powerUsage)); 
       //  delay(1000);
 
       break;
+      
     default: 
       break; 
   }
 }
 
-/////////////////////////LCD INIT FUNCTION//////////////////////
-LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
-
+/////////////////////////////////////////////////////////////////////////VOID SETUP PORTION////////////////////////////////////////////////////
 void setup() {
   ///////////////////PIN INITIALIZATION/////////////////////////
   pinMode(readPowerPin, INPUT);
@@ -92,35 +95,53 @@ void setup() {
 
 }
 
+////////////////////////////////////////////////////////////////////////////////////MAIN LOOP///////////////////////////////////////////////////////////////////////
 void loop() {
   float reverseCurrent = 0; 
   float forwardVoltage = 0; 
   float powerUsage = 0; 
+  
   //in main, the loop will continuously check which button is pressed. Depending on which button is pressed, different functions will be used. If voltageButton is pressed,
   //then power and voltage readings will be displayed. else if currentButton is pressed, only current is displayed. 
   //button is checked to see if zero because it is active low, which is why it is pulled high in setup
 
+  //the reason I have seperate if and switch is because the buttons are momentary. if it detects a change, then it'll change the current state button, otherwise itll keep the same functions as before
   if(digitalRead(currentButton) == 0){ 
-    //calls relay control to switch over the relay
-    relayControl(currentButton); 
-    //
-    reverseCurrent = currentRead(); //call current read function 
-    lcdControl(reverseCurrent, 0, 0, currentButton); 
+    buttonState = currentButton; 
   }
   else if(digitalRead(voltageButton) == 0){
-    //calls relay control to switch over the relay
-    relayControl(voltageButton); 
-    //
-    forwardVoltage = voltageRead(); 
-    powerUsage = powerRead(); 
-    lcdControl(0, forwardVoltage, powerUsage, voltageButton); 
+     buttonState = voltageButton; 
+
   }
   else if(digitalRead(powerButton) == 0){
-    //dont know what to do yet...
-    relayControl(powerButton); 
-    lcdControl(0, 0, 0, powerButton); 
-
+    buttonState = powerButton; 
   }
 
+
+  switch(buttonState){
+    case 0: 
+      //dont know what to do yet...
+      relayControl(powerButton); 
+      lcdControl(0, 0, 0, powerButton); 
+      break;
+       
+    case 1: 
+      //calls relay control to switch over the relay
+      relayControl(currentButton); 
+      //
+      reverseCurrent = currentRead(); //call current read function 
+      lcdControl(reverseCurrent, 0, 0, currentButton); 
+      break;
+      
+    case 17: 
+      //calls relay control to switch over the relay
+      relayControl(voltageButton); 
+      //
+      forwardVoltage = voltageRead(); 
+      powerUsage = powerRead(); 
+      lcdControl(0, forwardVoltage, powerUsage, voltageButton);
+      break; 
+  }
+  
   lcd.clear();
 }
