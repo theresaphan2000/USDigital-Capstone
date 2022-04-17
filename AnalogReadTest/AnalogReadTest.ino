@@ -34,7 +34,7 @@ int buttonState; //check button state
 /////////////////////////LCD INIT FUNCTION//////////////////////
 LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
 
-//////////////////////////////////////////////////////////////////Functions///////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////WRITE FUNCTIONS HERE///////////////////////////////////////////////////////////////////////
 /* How the LCD function works is it takes in 4 arguments, the readings and the pin number of which button is pressed. It uses a switch case to see 
  *  which button value was passed through and proceeds to print the value corresponding to what the button is supposed to do 
  */
@@ -49,18 +49,18 @@ void lcdControl(float reverseCurrent, float forwardVoltage, float powerUsage, co
       break;
       
     case 1: 
-      reverseCurrent = reverseCurrent*(5.0 / 1023.0); //converting to a legible value 
+//      reverseCurrent = reverseCurrent*(5.0 / 1023.0); //converting to a legible value 
       lcd.setCursor(0,0); 
       lcd.print("R-Current: " + String(reverseCurrent));
       //  delay(1000);
 
       break;
     case 17:
-      forwardVoltage = forwardVoltage*(5.0 / 1023.0); //converting to a legible value 
+//      forwardVoltage = forwardVoltage*(5.0 / 1023.0); //converting to a legible value 
       lcd.setCursor(0,0); 
       lcd.print("F-Voltage: " + String(forwardVoltage)); 
 
-      powerUsage = powerUsage*(5.0 / 1023.0); //converting to a legible value 
+//      powerUsage = powerUsage*(5.0 / 1023.0); //converting to a legible value 
       lcd.setCursor(1,0); 
       lcd.print("Power: " + String(powerUsage)); 
       //  delay(1000);
@@ -70,6 +70,20 @@ void lcdControl(float reverseCurrent, float forwardVoltage, float powerUsage, co
     default: 
       break; 
   }
+}
+
+/*For powerRead, I took the current and power that Len gave us and found voltage in excel. I then used that to make an equal corresponding to power. 
+ * 
+ */
+float powerRead(){
+  float output = 0; 
+  float input = analogRead(readPowerPin); 
+  
+  input = input*(5.0 / 1023.0); //converting to a legible value 
+  //need to convert the voltage to power reading 
+  //output = SOME EQUATION   
+  
+  return output; 
 }
 
 /////////////////////////////////////////////////////////////////////////VOID SETUP PORTION////////////////////////////////////////////////////
@@ -92,7 +106,6 @@ void setup() {
 
   lcd.begin(16, 2);
   lcd.print("EM1 ENCODER READER");
-
 }
 
 ////////////////////////////////////////////////////////////////////////////////////MAIN LOOP///////////////////////////////////////////////////////////////////////
