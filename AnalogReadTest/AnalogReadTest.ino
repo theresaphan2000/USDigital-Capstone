@@ -35,6 +35,12 @@ int buttonState; //check button state
 LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
 
 //////////////////////////////////////////////////////////////////WRITE FUNCTIONS HERE///////////////////////////////////////////////////////////////////////
+
+float currentRead(){
+
+  
+}
+
 /* How the LCD function works is it takes in 4 arguments, the readings and the pin number of which button is pressed. It uses a switch case to see 
  *  which button value was passed through and proceeds to print the value corresponding to what the button is supposed to do 
  */
