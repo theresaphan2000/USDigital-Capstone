@@ -37,7 +37,9 @@ LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
 //////////////////////////////////////////////////////////////////WRITE FUNCTIONS HERE///////////////////////////////////////////////////////////////////////
 
 float currentRead(){
-
+// float i = analogRead(pin); //Will be 0 to 1023 ( 1-5)
+// Input RCurrent_10k, RCurrent_1k, RCurrent_100
+// Output reverseCurrent
   
 }
 
