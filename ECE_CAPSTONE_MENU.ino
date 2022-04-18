@@ -1,13 +1,12 @@
 #include <LiquidCrystal.h>
 
 // Menu Array
-String measurementType[] = {{"VOLTAGE:"}, {"REVERSE LEAKAGE CURRENT:"}, {"POWER:"}};  // Text on the LCD
+String measurementType[] = {{"[VOLTAGE]:"}, {"[REVERSE LEAKAGE CURRENT]:"}, {"[POWER]:"}};  // Text on the bottom line
 
 // Pins being used
-// Pins Need to be changed
-const int OnButtonPin = 5;       // Pin 5 for Power command
-const int MeasurementButtonPin = 6;      // Pin 6 for measurement command
-const int ModeButtonPin = 7;         // Pin 7 for encoder type command
+const int OnButtonPin = 0;       // Pin 5 for Power command
+const int MeasurementButtonPin = 1;      // Pin 6 for measurement command
+const int ModeButtonPin = 17;         // Pin 7 for encoder type command
 
 
 // Counters for menu and button presses
@@ -27,15 +26,16 @@ boolean currentButtonStateEncoderMode = LOW;
 unsigned long lastDebounceTime = 0;      
 unsigned long debounceDelay = 50;         
 
-LiquidCrystal lcd(8, 9, 4, 5, 6, 7);
+const int rs = 23, en = 22, d4 = 21, d5 = 20, d6 = 19, d7 = 18; //LCD PIN CONNECTIONS
+LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
 
 void setup() {
-
-  pinMode(OnButtonPin, INPUT); 
-  pinMode(MeasurementButtonPin, INPUT);   
-  pinMode(ModeButtonPin, INPUT);      
+  lcd.begin(16, 2);
+  pinMode(OnButtonPin, INPUT_PULLUP); 
+  pinMode(MeasurementButtonPin, INPUT_PULLUP);   
+  pinMode(ModeButtonPin, INPUT_PULLUP);      
   delay(1000);
-
+  lcd.print("Allen is cool");
 }
 
 
@@ -60,7 +60,7 @@ void loop() {
     if (currentButtonStateMeasurement != buttonStateMeasurement)        
     { 
     buttonStateMeasurement = currentButtonStateMeasurement;  
-                 
+    lcd.clear();
       if (buttonStateMeasurement == LOW)                        
       {                                                 
       measurementCounter++;
@@ -72,11 +72,11 @@ void loop() {
         }
    
     }
-
+    
     // Encoder type button press
     if (currentButtonStateEncoderMode != buttonStateEncoderMode)        
     { 
-    buttonStateEncoderMode = currentButtonStateEncoderMode;  
+      buttonStateEncoderMode = currentButtonStateEncoderMode;  
                  
       if (buttonStateEncoderMode == LOW)                         
       {                                                 
@@ -85,23 +85,23 @@ void loop() {
   
         if (ModePressCount > 1)                         
         {                                        
-        ModePressCount = 0;
+          ModePressCount = 0;
         }
         
         if (ModePressCount == 0)      // Enters the Mode and writes a brief message.                         
         {                                                      
-        lcd.clear();
-        lcd.setCursor(0,0); 
-        lcd.print("EM1");
-        delay(2000); 
+          lcd.clear();
+          lcd.setCursor(0,0); 
+          lcd.print("EM1");
+          delay(20); 
         }
 
-        if (ModePressCount == 1)      // Enters the Mode and writes a brief message.                         
+        else if (ModePressCount == 1)      // Enters the Mode and writes a brief message.                         
         {                                                      
-        lcd.clear();
-        lcd.setCursor(0,0); 
-        lcd.print("EM2");
-        delay(2000); 
+         lcd.clear();
+         lcd.setCursor(0,0); 
+         lcd.print("EM2");
+         delay(20); 
         }
     }
 
