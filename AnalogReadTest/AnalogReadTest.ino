@@ -46,20 +46,41 @@ float currentRead(){
   // Inputs: RCurrent_10k, RCurrent_1k, RCurrent_100, readCurrentPin
   // Output: reverseCurrent
 
-  // Checking the 100 Ohm Multiplication
+  // Starts with checking the 100 Ohm resistor with a multiplication factor of 5,000
   if(i >= 0.5){ 
     i = i/50;  // Reversing the 50 Ohm multiplication
     i = i/100; // Reversing the 100 Ohm multiplication
-    
+    // HELP - Send this value (i) to the LCD screen. Will be in micro-amps ****
   }
   
   else if(i < 0.5){
-    digitalWrite(RCurrent_100, LOW); // Relay of 
+    digitalWrite(RCurrent_100, LOW); // Turn off relay to 100, multiplication factor is 50,000
     i = analogRead(readCurrentPin);
     i = i*(5/1023);
 
     if(i >= 0.5){
-      i = 1/50;
+      i = i/50;
+      i = i/1000;
+      // HELP - Send this value (i) to the LCD screen. Will be in micro-amps ****
+    }
+    
+    else if(i < 0.5){
+      digitalWrite(Current_1k, LOW);  // Turn off relay to 1k, multiplication factor is 500,000
+      i = analogRead(readCurrentPin); // Pulling value from the current A/D pin
+      i = i*(5/1023);                 // Converting value to 0-5 range
+
+      if( i >= 0.5){
+        i = i/50;
+        i = i/10000
+        // HELP - Send this value (i) to the LCD screen. Will be in micro-amps ****
+      }
+
+      else if(i < 0.5){
+        digitalWrite(Current_10k, LOW); // Turn off relay to 10k, multiplication factor is 5,000,000
+        i = analogRead(readCurrentPin); // Pulling value from the current A/D pin
+        i = i*(5/1023);                 // Converting value to 0-5 range
+        
+      }
     }
   }
   
