@@ -37,10 +37,21 @@ LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
 //////////////////////////////////////////////////////////////////WRITE FUNCTIONS HERE///////////////////////////////////////////////////////////////////////
 
 float currentRead(){
-// float i = analogRead(pin); //Will be 0 to 1023 (0-5)
-// Input RCurrent_10k, RCurrent_1k, RCurrent_100
-// Output reverseCurrent
 
+  float i = analogRead(readCurrentPin); // Will be 0 to 1023
+  i = i*(5/1023)                        // Convert to the 0 - 5 range
+  
+  // Input RCurrent_10k, RCurrent_1k, RCurrent_100
+  // Output reverseCurrent
+
+  // Checking the 100 Ohm Multiplication
+  if(digitalRead(currentButton) == 0){ 
+    buttonState = currentButton; 
+  }
+  else if(digitalRead(voltageButton) == 0){
+     buttonState = voltageButton; 
+
+  }
   
 }
 
