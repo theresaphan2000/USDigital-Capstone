@@ -49,9 +49,7 @@ float currentRead(){
   // Starts with checking the 100 Ohm resistor with a multiplication factor of 5,000
   Converting i to actual value
   if(i >= 0.5){ 
-    i = i/50;  // Reversing the 50 Ohm multiplication
     i = i/100; // Reversing the 100 Ohm multiplication
-    // HELP - Send this value (i) to the LCD screen. Will be in micro-amps ****
   }
   
   else if(i < 0.5){
@@ -61,9 +59,7 @@ float currentRead(){
 
     // Converting i to actual value
     if(i >= 0.5){
-      i = i/50;
       i = i/1000;
-      // HELP - Send this value (i) to the LCD screen. Will be in micro-amps ****
     }
     
     else if(i < 0.5){
@@ -73,9 +69,7 @@ float currentRead(){
 
       // converting i to actual value
       if( i >= 0.5){
-        i = i/50;
         i = i/10000;
-        // HELP - Send this value (i) to the LCD screen. Will be in micro-amps ****
       }
 
       else if(i < 0.5){
@@ -84,13 +78,14 @@ float currentRead(){
         i = i*(5/1023);                 // Converting value to 0-5 range
 
         // Converting i to actual value
-        i = i/50;
         i = i/100; // Split i/100,000 to avoid floating point issues
         i = i/1000; 
-        // HELP - Send this value (i) to the LCD screen. Will be in micro-amps **** 
       }
     }
   }
+
+  i = i/50
+  // HELP - Send this value (i) to the LCD screen. Will be in micro-amps ****
   
 }
 
