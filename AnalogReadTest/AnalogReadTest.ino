@@ -85,14 +85,14 @@ void setup() {
   pinMode(readPowerPin, INPUT);
   pinMode(readCurrentPin, INPUT);
   pinMode(readVoltagePin, INPUT);
-////relay for resistors
-//  pinMode(RCurrent_10k, OUTPUT);
-//  pinMode(RCurrent_1k, OUTPUT);
-//  pinMode(RCurrent_100, OUTPUT);
-////relay for parameter mode
-//  pinMode(D1, OUTPUT);
-//  pinMode(D2, OUTPUT);
-//  pinMode(D3, OUTPUT);
+//relay for resistors
+  pinMode(RCurrent_10k, OUTPUT);
+  pinMode(RCurrent_1k, OUTPUT);
+  pinMode(RCurrent_100, OUTPUT);
+//relay for parameter mode
+  pinMode(D1, OUTPUT);
+  pinMode(D2, OUTPUT);
+  pinMode(D3, OUTPUT);
 //all buttons are pulled up 
   pinMode(measureButton, INPUT_PULLUP); 
   pinMode(encoderButton, INPUT_PULLUP);
