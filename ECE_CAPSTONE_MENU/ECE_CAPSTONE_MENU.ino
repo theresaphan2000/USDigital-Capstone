@@ -43,7 +43,6 @@ void loop() {
 
   currentButtonStateMeasurement = digitalRead(MeasurementButtonPin);          
   currentButtonStateEncoderMode = digitalRead(ModeButtonPin); 
-     
   
   if (currentButtonStateMeasurement != lastButtonStateMeasurement || currentButtonStateEncoderMode != lastButtonStateEncoderMode){
     lastDebounceTime = millis();      
@@ -56,12 +55,10 @@ void loop() {
       buttonStateMeasurement = currentButtonStateMeasurement;  
       lcd.print("               "); //Clearing first line of code 
       if (buttonStateMeasurement == LOW){                        
-                                                       
+                                     
         measurementCounter++;
       }
-          
-      if (measurementCounter > 2){                           
-                                                      
+      if (measurementCounter > 2){                                                 
         measurementCounter = 0;
       }
    
@@ -72,29 +69,22 @@ void loop() {
       
       buttonStateEncoderMode = currentButtonStateEncoderMode;  
                  
-      if (buttonStateEncoderMode == LOW){                         
-                                                       
-        ModePressCount++;
+      if (buttonStateEncoderMode == LOW){                                                  
+        ModePressCount = !ModePressCount;
       }
-  
-        if (ModePressCount > 1){                         
-                                                
-          ModePressCount = 0;
-        }
-        
-        if (ModePressCount == 0){      // Enters the Mode and writes a brief message.                         
-                                                              
+
+      switch(ModePressCount){
+        case 0: 
           lcd.setCursor(0,0); 
           lcd.print("------EM1--------");
+          delay(20);
+          break;
+        case 1: 
+          lcd.setCursor(0,0); 
+          lcd.print("------EM2--------");
           delay(20); 
-        }
-
-        else if (ModePressCount == 1){      // Enters the Mode and writes a brief message.                         
-                                                              
-         lcd.setCursor(0,0); 
-         lcd.print("------EM2--------");
-         delay(20); 
-        }
+          break;
+      }
     }
 
   }   
