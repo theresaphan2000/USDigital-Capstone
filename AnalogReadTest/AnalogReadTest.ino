@@ -85,7 +85,7 @@ float currentRead(){
   }
 
   i = i/50;
-  // HELP - Send this value (i) to the LCD screen. Will be in micro-amps ****
+  // HELP - Send this value (i) to the LCD screen. Will be in micro-amps (eventually... need to do more math)****
   
 }
 
