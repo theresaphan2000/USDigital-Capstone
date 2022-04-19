@@ -38,13 +38,13 @@ LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
 
 float currentRead(){
 // Begins assuming all 3 resistor relays are originally high...
-
-  float i
-  i = analogRead(readCurrentPin); // Will be range 0 - 1023
-  i = i*(5/1023);                 // Convert to the 0 - 5 range
   
   // Inputs: RCurrent_10k, RCurrent_1k, RCurrent_100, readCurrentPin
   // Output: reverseCurrent
+
+  float i;
+  i = analogRead(readCurrentPin); // Will be range 0 - 1023
+  i = i*(5/1023);                 // Convert to the 0 - 5 range
 
   // Starts with checking the 100 Ohm resistor with a multiplication factor of 5,000
   Converting i to actual value
