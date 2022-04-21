@@ -64,7 +64,7 @@ float currentRead(){
   i = i*(5.0/1023.0);                 // Convert to the 0 - 5 range
 
   // Starts with checking the 100 Ohm resistor with a multiplication factor of 5,000
-  Converting i to actual value
+ //Converting i to actual value
   if(i >= 0.5){ 
     i = i/100.0; // Reversing the 100 Ohm multiplication
   }
@@ -80,7 +80,7 @@ float currentRead(){
     }
     
     else if(i < 0.5){
-      digitalWrite(Current_1k, LOW);  // Turn off relay to 1k, multiplication factor is 500,000
+      digitalWrite(RCurrent_1k, LOW);  // Turn off relay to 1k, multiplication factor is 500,000
       i = analogRead(readCurrentPin); // Pulling value from the current A/D pin
       i = i*(5.0/1023.0);                 // Converting value to 0-5 range
 
@@ -90,7 +90,7 @@ float currentRead(){
       }
 
       else if(i < 0.5){
-        digitalWrite(Current_10k, LOW); // Turn off relay to 10k, multiplication factor is 5,000,000
+        digitalWrite(RCurrent_10k, LOW); // Turn off relay to 10k, multiplication factor is 5,000,000
         i = analogRead(readCurrentPin); // Pulling value from the current A/D pin
         i = i*(5.0/1023.0);                 // Converting value to 0-5 range
 
