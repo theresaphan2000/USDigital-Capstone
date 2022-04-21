@@ -76,6 +76,7 @@ float currentRead(){
   else if(i < 0.5){
     digitalWrite(RCurrent_100, LOW); // Turn off relay to 100, multiplication factor is 50,000
     delay(3);
+    
     i = analogRead(readCurrentPin);
     i = i*(5.0/1023.0);
 
@@ -86,10 +87,8 @@ float currentRead(){
     
     else if(i < 0.5){
       digitalWrite(RCurrent_1k, LOW);  // Turn off relay to 1k, multiplication factor is 500,000
-<<<<<<< Updated upstream
-=======
       delay(3);
->>>>>>> Stashed changes
+      
       i = analogRead(readCurrentPin); // Pulling value from the current A/D pin
       i = i*(5.0/1023.0);                 // Converting value to 0-5 range
 
@@ -100,10 +99,8 @@ float currentRead(){
 
       else if(i < 0.5){
         digitalWrite(RCurrent_10k, LOW); // Turn off relay to 10k, multiplication factor is 5,000,000
-<<<<<<< Updated upstream
-=======
         delay(3);
->>>>>>> Stashed changes
+        
         i = analogRead(readCurrentPin); // Pulling value from the current A/D pin
         i = i*(5.0/1023.0);                 // Converting value to 0-5 range
 
