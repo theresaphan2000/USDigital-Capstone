@@ -1,6 +1,8 @@
 #include <LiquidCrystal.h>
 
 //////////////////////Function Prototypes///////////////////////////
+void lcdControl(float reverseCurrent, float forwardVoltage, float powerUsage, const int buttonPressed); //controls LCD and what it prints 
+
 /*For Danielle: controls relays. Use the buttonPressed variable to figure out what relay to open or close.You can use switch or if else. 
  * currentButton = 1, voltage and power reading = 17, and power button = 0.
  */
@@ -23,108 +25,121 @@ const int RCurrent_10k = 4;
 const int RCurrent_1k = 3;
 const int RCurrent_100 = 2;
 
-//Relays 
-const int D1 = 7; //10v Reverse or GND for 5V
-const int D2 = 6; // 2nd Relay for 5V input
-const int D3 = 5; // Forward Voltage Reading 
-
 //Button Pins
-const int measureButton = 0;
-const int encoderButton = 1;
-
-int measurementCounter = 0;   // Used to cycle through measurements
-int ModePressCount = 0;       // Used to decide which encoder is being measured 
-
-boolean buttonStateMeasurement = LOW;            
-boolean lastButtonStateMeasurement = LOW;                
-boolean currentButtonStateMeasurement = LOW;
-boolean buttonStateEncoderMode = LOW;           
-boolean lastButtonStateEncoderMode = LOW;                
-boolean currentButtonStateEncoderMode = LOW;
-
-// Debounce
-unsigned long lastDebounceTime = 0;      
-unsigned long debounceDelay = 50;
+const int powerButton = 0;
+const int currentButton = 1;
+const int voltageButton = 17;
+int buttonState; //check button state 
 
 /////////////////////////LCD INIT FUNCTION//////////////////////
 LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
-// Menu Array
-String measurementType[] = {{"VOLTAGE:"}, {"R-CURRENT:"}, {"POWER:"}};  // Text on the bottom line
 
 //////////////////////////////////////////////////////////////////WRITE FUNCTIONS HERE///////////////////////////////////////////////////////////////////////
 
 float currentRead(){
-  // Begins assuming all 3 resistor relays are originally high...
-    
-    // Inputs: RCurrent_10k, RCurrent_1k, RCurrent_100, readCurrentPin
-    // Output: reverseCurrent
+// Begins assuming all 3 resistor relays are originally high...
   
-    float i;
-    i = analogRead(readCurrentPin); // Will be range 0 - 1023
-    i = i*(5/1023);                 // Convert to the 0 - 5 range
+  // Inputs: RCurrent_10k, RCurrent_1k, RCurrent_100, readCurrentPin
+  // Output: reverseCurrent
 
-    // Starts with checking the 100 Ohm resistor with a multiplication factor of 5,000
-    //Converting i to actual value
-    if(i >= 0.5){ 
-      i = i/100; // Reversing the 100 Ohm multiplication
+  float i;
+  i = analogRead(readCurrentPin); // Will be range 0 - 1023
+  i = i*(5.0/1023.0);                 // Convert to the 0 - 5 range
+
+  // Starts with checking the 100 Ohm resistor with a multiplication factor of 5,000
+  Converting i to actual value
+  if(i >= 0.5){ 
+    i = i/100.0; // Reversing the 100 Ohm multiplication
+  }
+  
+  else if(i < 0.5){
+    digitalWrite(RCurrent_100, LOW); // Turn off relay to 100, multiplication factor is 50,000
+    i = analogRead(readCurrentPin);
+    i = i*(5.0/1023.0);
+
+    // Converting i to actual value
+    if(i >= 0.5){
+      i = i/1000.0;
     }
     
     else if(i < 0.5){
-      digitalWrite(RCurrent_100, LOW); // Turn off relay to 100, multiplication factor is 50,000
-      i = analogRead(readCurrentPin);
-      i = i*(5/1023);
-  
-      // Converting i to actual value
-      if(i >= 0.5){
-        i = i/1000;
+      digitalWrite(Current_1k, LOW);  // Turn off relay to 1k, multiplication factor is 500,000
+      i = analogRead(readCurrentPin); // Pulling value from the current A/D pin
+      i = i*(5.0/1023.0);                 // Converting value to 0-5 range
+
+      // converting i to actual value
+      if( i >= 0.5){
+        i = i/10000.0;
       }
+
       else if(i < 0.5){
-        digitalWrite(RCurrent_1k, LOW);  // Turn off relay to 1k, multiplication factor is 500,000
+        digitalWrite(Current_10k, LOW); // Turn off relay to 10k, multiplication factor is 5,000,000
         i = analogRead(readCurrentPin); // Pulling value from the current A/D pin
-        i = i*(5/1023);                 // Converting value to 0-5 range
-        // converting i to actual value
-        if( i >= 0.5){
-          i = i/10000;
-        }
-        else if(i < 0.5){
-          digitalWrite(RCurrent_10k, LOW); // Turn off relay to 10k, multiplication factor is 5,000,000
-          i = analogRead(readCurrentPin); // Pulling value from the current A/D pin
-          i = i*(5/1023);                 // Converting value to 0-5 range
-          
-          // Converting i to actual value
-          i = i/100; // Split i/100,000 to avoid floating point issues
-          i = i/1000; 
-        }
+        i = i*(5.0/1023.0);                 // Converting value to 0-5 range
+
+        // Converting i to actual value
+        i = i/100.0; // Split i/100,000 to avoid floating point issues
+        i = i/1000.0; 
       }
     }
-    i = i/50.0;
-    i = i*1000.0; // Convert to mA
-    i = i*1000.0; // Convert to micro-amp
-    // HELP - Send this value (i) to the LCD screen. Will be in micro-amps ****
-    
   }
 
+  i = i/50.0;
+  i = i*1000.0; // Convert to mA
+  i = i*1000.0; // Convert to micro-amp
+  return i;
+  
+}
 
-float voltageRead(){
-  return .0002; //for testing purposes
+/* How the LCD function works is it takes in 4 arguments, the readings and the pin number of which button is pressed. It uses a switch case to see 
+ *  which button value was passed through and proceeds to print the value corresponding to what the button is supposed to do 
+ */
+void lcdControl(float reverseCurrent, float forwardVoltage, float powerUsage, const int buttonPressed){
+  //case 0 is turn off or on LCD 
+  //case 1 is display reverse current 
+  //case 17 is display forward voltage 
+  
+  switch(buttonPressed){
+    case 0:
+      //idk yet
+      break;
+      
+    case 1: 
+//      reverseCurrent = reverseCurrent*(5.0 / 1023.0); //converting to a legible value 
+      lcd.setCursor(0,0); 
+      lcd.print("R-Current: " + String(reverseCurrent));
+      //  delay(1000);
+
+      break;
+    case 17:
+//      forwardVoltage = forwardVoltage*(5.0 / 1023.0); //converting to a legible value 
+      lcd.setCursor(0,0); 
+      lcd.print("F-Voltage: " + String(forwardVoltage)); 
+
+//      powerUsage = powerUsage*(5.0 / 1023.0); //converting to a legible value 
+      lcd.setCursor(1,0); 
+      lcd.print("Power: " + String(powerUsage)); 
+      //  delay(1000);
+
+      break;
+      
+    default: 
+      break; 
+  }
 }
 
 /*For powerRead, I took the current and power that Len gave us and found voltage in excel. I then used that to make an equal corresponding to power. 
  * 
  */
 float powerRead(){
-  int sensorValue = analogRead(readPowerPin);
+  float output = 0; 
+  float input = analogRead(readPowerPin); 
   
-  float voltage = (float)sensorValue * (5.0 / 1023.0);
-
-  float Power; 
+  input = input*(5.0 / 1023.0); //converting to a legible value 
+  //need to convert the voltage to power reading 
+  //output = SOME EQUATION   
   
-  Serial.println(voltage);
-  
-  Current = voltage / 10000.0; // I = V/R 
-  
-  Power = 0.0184*(Current) + 0.061; // Table relationship - given
-  return Power;   
+  return output;
 }
 
 /////////////////////////////////////////////////////////////////////////VOID SETUP PORTION////////////////////////////////////////////////////
@@ -133,105 +148,69 @@ void setup() {
   pinMode(readPowerPin, INPUT);
   pinMode(readCurrentPin, INPUT);
   pinMode(readVoltagePin, INPUT);
-//relay for resistors
+
   pinMode(RCurrent_10k, OUTPUT);
   pinMode(RCurrent_1k, OUTPUT);
   pinMode(RCurrent_100, OUTPUT);
-//relay for parameter mode
-  pinMode(D1, OUTPUT);
-  pinMode(D2, OUTPUT);
-  pinMode(D3, OUTPUT);
-//all buttons are pulled up 
-  pinMode(measureButton, INPUT_PULLUP); 
-  pinMode(encoderButton, INPUT_PULLUP);
+
+  //all buttons are pulled up 
+  pinMode(powerButton, INPUT_PULLUP); //to turn LCD screen on or off 
+  pinMode(currentButton, INPUT_PULLUP);
+  pinMode(voltageButton, INPUT_PULLUP);
 
   Serial.begin(19200);
 
   lcd.begin(16, 2);
-  lcd.print("   US DIGITAL");
-  delay(5000); 
+  lcd.print("EM1 ENCODER READER");
 }
 
 ////////////////////////////////////////////////////////////////////////////////////MAIN LOOP///////////////////////////////////////////////////////////////////////
-
 void loop() {
   float reverseCurrent = 0; 
   float forwardVoltage = 0; 
   float powerUsage = 0; 
   
-//  lcd.setCursor(0,1);                  
+  //in main, the loop will continuously check which button is pressed. Depending on which button is pressed, different functions will be used. If voltageButton is pressed,
+  //then power and voltage readings will be displayed. else if currentButton is pressed, only current is displayed. 
+  //button is checked to see if zero because it is active low, which is why it is pulled high in setup
 
-  currentButtonStateMeasurement = digitalRead(measureButton);          
-  currentButtonStateEncoderMode = digitalRead(encoderButton); 
+  //the reason I have seperate if and switch is because the buttons are momentary. if it detects a change, then it'll change the current state button, otherwise itll keep the same functions as before
+  if(digitalRead(currentButton) == 0){ 
+    buttonState = currentButton; 
+  }
+  else if(digitalRead(voltageButton) == 0){
+     buttonState = voltageButton; 
 
-  //Debouncer line 
-  if (currentButtonStateMeasurement != lastButtonStateMeasurement || currentButtonStateEncoderMode != lastButtonStateEncoderMode){
-    lastDebounceTime = millis();      
-  }  
+  }
+  else if(digitalRead(powerButton) == 0){
+    buttonState = powerButton; 
+  }
 
-  if ((millis() - lastDebounceTime) > debounceDelay){    
-                                             
-    // Measurement button press
-    if (currentButtonStateMeasurement != buttonStateMeasurement){        
-     
-      buttonStateMeasurement = currentButtonStateMeasurement;  
+
+  switch(buttonState){
+    case 0: 
+      //dont know what to do yet...
+      relayControl(powerButton); 
+      lcdControl(0, 0, 0, powerButton); 
+      break;
+       
+    case 1: 
+      //calls relay control to switch over the relay
+      relayControl(currentButton); 
+      //
+      reverseCurrent = currentRead(); //call current read function 
+      lcdControl(reverseCurrent, 0, 0, currentButton); 
+      break;
       
-      if (buttonStateMeasurement == LOW){                        
-        measurementCounter++;
-        lcd.setCursor(0,1);     
-        lcd.print("                "); //Clearing first line of code 
-      }
-      
-      lcd.setCursor(0,1);     
-                   
-      switch(measurementCounter){
-        case 0: //case 0, Forward Voltage is read
-          forwardVoltage = voltageRead(); 
-          lcd.print(measurementType[measurementCounter]); 
-          lcd.print(forwardVoltage,5); //have to do this to get floating point 5 digit percision
-          break;
-        case 1: //case 1, Reverse Current is read
-          reverseCurrent = currentRead(); 
-          lcd.print(measurementType[measurementCounter]);
-          lcd.print(reverseCurrent,5);
-          break;
-        case 2: //case 2, Power is read 
-          powerUsage = powerRead(); 
-          lcd.print(measurementType[measurementCounter]);
-          lcd.print(powerUsage,5);
-          break; 
-        case 3: 
-          measurementCounter = 0;
-          break;
-        default:
-          break;
-      }
-    }
-    
-    // Encoder type button press
-    if (currentButtonStateEncoderMode != buttonStateEncoderMode){        
-      
-      buttonStateEncoderMode = currentButtonStateEncoderMode;  
-                 
-      if (buttonStateEncoderMode == LOW){                                                  
-        ModePressCount = !ModePressCount;
-      }
-      
-      switch(ModePressCount){
-        case 0: 
-          lcd.setCursor(0,0); 
-          lcd.print("------EM1--------");
-          delay(20);
-          break;
-        case 1: 
-          lcd.setCursor(0,0); 
-          lcd.print("------EM2--------");
-          delay(20); 
-          break;
-      }
-    }
-  }   
-  // states are reset back to low
-  lastButtonStateMeasurement = currentButtonStateMeasurement;       // resets the left button state to LOW
-  lastButtonStateEncoderMode = currentButtonStateEncoderMode;     // resets the right button state to LOW
+    case 17: 
+      //calls relay control to switch over the relay
+      relayControl(voltageButton); 
+      //
+      forwardVoltage = voltageRead(); 
+      powerUsage = powerRead(); 
+      lcdControl(0, forwardVoltage, powerUsage, voltageButton);
+      break; 
+  }
+  
+  lcd.clear();
 }
